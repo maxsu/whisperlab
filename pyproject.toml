@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools", "wheel"] 
+
+[[project.authors]]
+name = "Max Suica"
+email = "max.suica@gmail.com"
+
+[project.license]
+text = "AGPLv3"
+
+[project.urls]
+Homepage = "https://github.com/maxsu/WhisperColab.py"
+"Bug Tracker" = "https://github.com/maxsu/WhisperColab.py"
+
+[project]
+name = "whispercolab"
+version = "0.1.0"
+description = "A Python package for running Whisper on colab, mobile, and more!"
+readme = "README.md"
+
+dependencies = [
+    # AI
+    "openai-whisper",
+    # Data Models
+    "pydantic",
+    # CLI
+    "click",
+    # QA
+    "flake8",
+    "pytest",
+]
+requires-python = ">=3.8"
+
+keywords = [
+    "whisper",
+    "colab",
+    "text to speech",
+    "assistive technology",
+]
+
+classifiers = [
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+
+[tool.pytest.ini_options]
+log_cli = true

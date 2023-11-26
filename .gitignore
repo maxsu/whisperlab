@@ -1,0 +1,9 @@
+
+# Ignore log files in the root directory.
+*.txt
+
+# Ignore python cache files
+**__pycache__/
+
+# Ignore egg info files
+*.egg-info/
