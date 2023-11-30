@@ -1,0 +1,50 @@
+# This workflow builds and tests a cross platform python package
+
+name: CI
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Job ${{matrix.id}}. Python ${{ matrix.python }} on ${{matrix.os}}.
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Jobs 1-4: Legacy Tests. Test with python 3.8 - 3.11 on ubuntu
+          - {id: 1, python: "3.8", os: ubuntu-latest }
+          - {id: 2, python: "3.9", os: ubuntu-latest }
+          - {id: 3, python: "3.11", os: ubuntu-latest }
+          - {id: 4, python: "3.10", os: ubuntu-latest }
+          # Jobs 5-7: Cross Platform Tests. Test with python 3.12 on windows, mac, and ubuntu
+          - {id: 5, python: "3.12", os: ubuntu-latest }
+          - {id: 6, python: "3.12", os: windows-latest }
+          - {id: 7, python: "3.12", os: macos-latest }
+          
+    steps:
+    - name: Fetch Repo
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Update pip
+      run: pip install -U pip
+
+    - name: Fetch linter
+      run: pip install flake8
+
+    - name: Lint package
+      run: flake8
+
+    - name: Install package
+      run: pip install .
+    
+    - name: Test package
+      run: pytest
