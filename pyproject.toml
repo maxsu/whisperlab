@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"] 
+requires = ["setuptools", "wheel"]
 
 [[project.authors]]
 name = "Max Suica"
@@ -25,19 +25,15 @@ dependencies = [
     "pydantic",
     # CLI
     "click",
+    # Logging
+    "logging518",
     # QA
     "flake8",
     "pytest",
 ]
 requires-python = ">=3.8"
 
-keywords = [
-    "whisper",
-    "colab",
-    "text to speech",
-    "assistive technology",
-]
-
+keywords = ["whisper", "colab", "text to speech", "assistive technology"]
 classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Intended Audience :: Science/Research",
@@ -50,6 +46,56 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 
+# Tools
 
+# Linter
+[tool.flake8]
+# Linting Rules
+# See Rules Reference: https://www.flake8rules.com/
+select = ["F6", "F7", "F8", "F9"] # Break build on syntax errors 
+extend-ignore = ["E5", "C9"]      # Warn about long or complex lines
+# Linting Options
+# See: https://flake8.pycqa.org/en/latest/user/configuration.html
+max-complexity = 10 # McCabe complexity >10 is 🥵
+count = true        # Show error counts report
+statistics = true   # Show error stats report
+show-source = true  # Show error lines
+
+# Testing
 [tool.pytest.ini_options]
-log_cli = true
+log_cli = true # Live-log outputs during tests 
+# Turn this off for quieter tests
+# See: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli
+
+# Logging
+[tool.logging]
+version = 1
+
+# Main Logger
+[tool.logging.loggers.main]
+level = "DEBUG"
+handlers = ["console", "file"]
+
+# Handlers
+[tool.logging.handlers.console]
+stream = "ext://sys.stdout"
+formatter = "simple"
+class = "logging.StreamHandler"
+
+[tool.logging.handlers.file]
+filename = "whisperlab_main.log"
+formatter = "verbose"
+class = "logging.FileHandler"
+
+# Formatters 
+[tool.logging.formatters.simple]
+format = "{asctime} [{levelname}] {message}"
+style = '{'
+
+[tool.logging.formatters.verbose]
+format = """{asctime} [{levelname}]
+src: {relpath}:{lineno}
+msg: {message}
+-------------------------------"""
+style = '{'
+class = "whisperlab.logging.RelPathFormatter"

@@ -1,23 +1,27 @@
 """
 Whisper Runner Module
 
-This module contains the run_whisper function which can transcribe an audio file.
+This module can transcribe an audio file using Whisper.
 """
+
+import logging as log
 
 from pydantic import BaseModel, FilePath
 import whisper
 
-from whisperlab import logger
 
 # Config
 
+
 class WhisperModels:
     BASE = "base"
+
 
 DEFAULT_WHISPER_MODEL = WhisperModels.BASE
 
 
 # Request Model
+
 
 class WhisperRequest(BaseModel):
     """
@@ -30,12 +34,14 @@ class WhisperRequest(BaseModel):
     Returns:
         dict: The whisper result
     """
+
     audio_file: FilePath
     args: dict = {}
     model: str = DEFAULT_WHISPER_MODEL
 
 
 # Use Case
+
 
 def run_whisper(
     request: WhisperRequest,
@@ -58,7 +64,7 @@ def run_whisper(
     audio = whisper.pad_or_trim(audio)
 
     # Log the audio file
-    logger.info("Transcribing %s", request.audio_file)
+    log.info("Transcribing %s", request.audio_file)
 
     # Fetch the model
     model = whisper.load_model(request.model)
@@ -67,6 +73,6 @@ def run_whisper(
     response = model.transcribe(audio, **request.args)
 
     # Log the result text
-    logger.info("Transcription:\n%s", response["text"])
+    log.info("Transcription:\n%s", response["text"])
 
     return response

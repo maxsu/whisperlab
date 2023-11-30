@@ -27,10 +27,11 @@ ExistingFile = Path(exists=True, dir_okay=False)
 
 # Shared options
 
+
 @group()
 @option("-v", "--verbose", help="Enable verbose output.")
 @option("-s", "--structured", help="Enable JSON output.")
-@option("-l", "--log-file", help="Log output to this file.", type=WriteableFile)
+@option("-l", "--log-file", help="Log output to file.", type=WriteableFile)
 def cli(verbose: bool, structured: bool, log_file: str):
     """
     Take care of options shared by multiple commands
@@ -45,6 +46,7 @@ def cli(verbose: bool, structured: bool, log_file: str):
 
 
 # Transcribe command
+
 
 @cli.command()
 @argument(
