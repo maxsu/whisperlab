@@ -59,8 +59,12 @@ def run_whisper(
         dict: The whisper result
     """
 
-    # Load and trim the audio file to 30 seconds
-    audio = whisper.load_audio(str(request.audio_file))
+    audio_file = str(request.audio_file)
+
+    # Load the audio file
+    audio = whisper.load_audio(audio_file)
+
+    # Trim the audio to 30 seconds
     audio = whisper.pad_or_trim(audio)
 
     # Log the audio file
