@@ -13,7 +13,7 @@ Homepage = "https://github.com/maxsu/WhisperColab.py"
 "Bug Tracker" = "https://github.com/maxsu/WhisperColab.py"
 
 [project]
-name = "whispercolab"
+name = "whisperlab"
 version = "0.1.0"
 description = "A Python package for running Whisper on colab, mobile, and more!"
 readme = "README.md"
