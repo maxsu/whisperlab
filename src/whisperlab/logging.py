@@ -6,20 +6,16 @@ of the project's pyproject.toml file.
 """
 
 import logging
-import logging.config
+import logging518.config
 from pathlib import Path
-import toml
 
 CONFIG_FILE = "pyproject.toml"
 
 
 def config_log():
-    # Parse logging config dictionary
-    config = toml.load(CONFIG_FILE)['tool']['logging']
-    # Load logging config
-    logging.config.dictConfig(config)
+    # Load the logging config from the project's pyproject.toml file
+    logging518.config.fileConfig(CONFIG_FILE)
 
-    return logging.getLogger('main')
 
 
 class DefaultFormatter(logging.Formatter):
