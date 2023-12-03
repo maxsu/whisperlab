@@ -90,7 +90,7 @@ class = "logging.FileHandler"
 # Formatters 
 [tool.logging.formatters.simple]
 format = "{asctime} [{levelname}] {message}"
-style = '{'
+class = "whisperlab.logging.DefaultFormatter"
 
 [tool.logging.formatters.verbose]
 format = """{asctime} [{levelname}]
@@ -98,4 +98,3 @@ src: {relpath}:{lineno}
 msg: {message}
 -------------------------------"""
 class = "whisperlab.logging.DefaultFormatter"
-class = "whisperlab.logging.RelPathFormatter"

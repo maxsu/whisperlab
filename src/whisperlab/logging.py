@@ -5,7 +5,6 @@ This module pulls the logging config from the tool.logging section
 of the project's pyproject.toml file.
 """
 
-import json
 import logging
 import logging.config
 from pathlib import Path
