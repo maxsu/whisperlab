@@ -97,5 +97,5 @@ format = """{asctime} [{levelname}]
 src: {relpath}:{lineno}
 msg: {message}
 -------------------------------"""
-style = '{'
+class = "whisperlab.logging.DefaultFormatter"
 class = "whisperlab.logging.RelPathFormatter"
