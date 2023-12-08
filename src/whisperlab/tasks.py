@@ -3,7 +3,7 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field, FilePath
 
-from whisperlab.transcribe import DEFAULT_WHISPER_MODEL
+from whisperlab.transcribe import DEFAULT_TRANSRIPTION_MODEL
 
 
 class Task(BaseModel):
@@ -27,4 +27,4 @@ class TransciptionTask(Task):
 
     audio_file: FilePath
     args: dict = {}
-    model: str = DEFAULT_WHISPER_MODEL
+    model: str = DEFAULT_TRANSRIPTION_MODEL

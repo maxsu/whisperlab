@@ -19,7 +19,7 @@ from whisperlab.run_whisper import (
     run_whisper,
     WhisperRequest,
     WhisperModels,
-    DEFAULT_WHISPER_MODEL,
+    DEFAULT_TRANSRIPTION_MODEL,
 )
 from whisperlab.logging import config_log
 
@@ -50,7 +50,7 @@ def cli():
     "-m",
     "--model",
     type=click.Choice(WhisperModels),
-    default=DEFAULT_WHISPER_MODEL,
+    default=DEFAULT_TRANSRIPTION_MODEL,
     help="The transcription model to use",
 )
 def transcribe(audio_file: str, model: str):
