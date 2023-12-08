@@ -5,26 +5,42 @@ This module can transcribe an audio file using Whisper.
 """
 
 import logging
+from pathlib import Path
 
 import whisper
 
-from whisperlab import tasks
+from .tasks import TranscriptionTask
 
 
 log = logging.getLogger("main")
 
 
-# Config Objects ===============================================================
+# Globals =====================================================================
+
+TRANSCRIPTION_MODELS = ["base"]
+
+DEFAULT_TRANSCRIPTION_MODEL = TRANSCRIPTION_MODELS[0]
+
+EMPTY_RESULT = {"text": ""}
 
 
-class WhisperModels:
-    BASE = "base"
+# Validation ==================================================================
 
 
-DEFAULT_WHISPER_MODEL = WhisperModels.BASE
+def EmptyFile(audio_file: Path):
+    """
+    Validate that the audio file is not empty
+
+    Args:
+        audio_file (Path): Path to the audio file to validate
+
+    Returns:
+        bool: True if the audio file is empty, False otherwise
+    """
+    return audio_file.stat().st_size == 0
 
 
-# Use Case =====================================================================
+# Use Case ====================================================================
 
 
 def transcribe(
@@ -44,9 +60,9 @@ def transcribe(
     """
 
     # Check if the audio file is empty
-    if task.audio_file.stat().st_size == 0:
+    if EmptyFile(task.audio_file):
         # Return an empty result
-        task.result = {"text": ""}
+        task.result = EMPTY_RESULT
         return task
 
     # Load and trim the audio file to 30 seconds
