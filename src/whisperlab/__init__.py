@@ -1,17 +1,8 @@
-from whisperlab.run_whisper import (
-    run_whisper,
-    WhisperRequest,
-    WhisperModels,
-    DEFAULT_WHISPER_MODEL,
-)
+# Sparse base module for WhisperLab, to be used as a namespace package.
+# Pleas import from whisperlab submodules instead
 
-from whisperlab.logger import config_log
+# Example:
 
-# Library API
-__all__ = [
-    "config_log",
-    "run_whisper",
-    "WhisperRequest",
-    "WhisperModels",
-    "DEFAULT_WHISPER_MODEL",
-]
+# from whisperlab import transcribe
+
+# transcribe.transcribe_file('path/to/file.wav')
