@@ -1,22 +1,35 @@
-[build-system]
-requires = ["setuptools", "wheel"]
+# -----------------------------------------------------------------------------
 
-[[project.authors]]
-name = "Max Suica"
-email = "max.suica@gmail.com"
+# Whisperlab Project Metadata
 
-[project.license]
-text = "AGPLv3"
-
-[project.urls]
-Homepage = "https://github.com/maxsu/WhisperColab.py"
-"Bug Tracker" = "https://github.com/maxsu/WhisperColab.py"
+# -----------------------------------------------------------------------------
 
 [project]
 name = "whisperlab"
-version = "0.1.0"
 description = "A Python package for running Whisper on colab, mobile, and more!"
+authors = [{ name = "Max Suica", email = "max.suica@gmail.com" }]
+license.text = "AGPLv3"
+version = "0.2.0"
 readme = "README.md"
+urls = { Homepage = "https://github.com/maxsu/WhisperColab.py" }
+keywords = ["whisper", "colab", "text to speech", "assistive technology"]
+classifiers = [
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+# -----------------------------------------------------------------------------
+
+# Dependencies
+
+# -----------------------------------------------------------------------------
 
 dependencies = [
     # AI
@@ -31,70 +44,83 @@ dependencies = [
     "flake8",
     "pytest",
 ]
+
+
+# We support python 3.8 - 3.12
 requires-python = ">=3.8"
 
-keywords = ["whisper", "colab", "text to speech", "assistive technology"]
-classifiers = [
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU Affero General Public License v3",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-]
 
-# Tools
+[build-system]
+requires = ["setuptools", "wheel"]
 
-# Linter
+
+# -----------------------------------------------------------------------------
+
+# Linting
+
+# -----------------------------------------------------------------------------
+
 [tool.flake8]
-# Linting Rules
-# See Rules Reference: https://www.flake8rules.com/
-select = ["F6", "F7", "F8", "F9"] # Break build on syntax errors 
+
+# Rules
+select = ["F6", "F7", "F8", "F9"] # Break build on syntax errors
 extend-ignore = ["E5", "C9"]      # Warn about long or complex lines
-# Linting Options
-# See: https://flake8.pycqa.org/en/latest/user/configuration.html
-max-complexity = 10 # McCabe complexity >10 is 🥵
-count = true        # Show error counts report
-statistics = true   # Show error stats report
-show-source = true  # Show error lines
+
+# Options
+max-complexity = 10
+count = true
+statistics = true
+show-source = true
+
+# See:
+# - Rules Reference: https://www.flake8rules.com/
+# - Options Reference https://flake8.pycqa.org/en/latest/user/configuration.html
+
+# -----------------------------------------------------------------------------
 
 # Testing
+
+# -----------------------------------------------------------------------------
+
 [tool.pytest.ini_options]
-log_cli = true # Live-log outputs during tests 
-# Turn this off for quieter tests
-# See: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli
+
+# Live-log outputs during tests  (Turn this off for quieter tests)
+log_cli = true 
+
+# See: 
+# Log-Cli Reference: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli
+
+
+# -----------------------------------------------------------------------------
 
 # Logging
+
+# -----------------------------------------------------------------------------
+
 [tool.logging]
+
 version = 1
 
-# Main Logger
-[tool.logging.loggers.main]
-level = "DEBUG"
-handlers = ["console", "file"]
+# main logger
+loggers.main.level = "DEBUG"
+loggers.main.handlers = ["console", "file"]
 
-# Handlers
-[tool.logging.handlers.console]
-stream = "ext://sys.stdout"
-formatter = "simple"
-class = "logging.StreamHandler"
+[tool.logging.handlers]
+console.class = "logging.StreamHandler"
+console.stream = "ext://sys.stdout"
+console.formatter = "simple"
 
-[tool.logging.handlers.file]
-filename = "whisperlab_main.log"
-formatter = "verbose"
-class = "logging.FileHandler"
+file.class = "logging.FileHandler"
+file.filename = "whisperlab_main.log"
+file.formatter = "verbose"
 
-# Formatters 
-[tool.logging.formatters.simple]
-format = "{asctime} [{levelname}] {message}"
-class = "whisperlab.logging.DefaultFormatter"
+[tool.logging.formatters]
+simple.style = "{"
+simple.format = "{asctime} [{levelname}] {message}"
 
-[tool.logging.formatters.verbose]
-format = """{asctime} [{levelname}]
+verbose.class = "whisperlab.logging.Formatter" # Provide relpath
+verbose.style = "{"
+verbose.format = """{asctime} [{levelname}]
 src: {relpath}:{lineno}
 msg: {message}
 -------------------------------"""
-class = "whisperlab.logging.DefaultFormatter"
