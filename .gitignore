@@ -7,3 +7,6 @@
 
 # Ignore egg info files
 *.egg-info/
+
+# Ignore VSCode Local Settings 
+.vscode/
