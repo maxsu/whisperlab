@@ -85,7 +85,7 @@ show-source = true
 [tool.pytest.ini_options]
 
 # Live-log outputs during tests  (Turn this off for quieter tests)
-log_cli = true 
+log_cli = true
 
 # See: 
 # Log-Cli Reference: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli

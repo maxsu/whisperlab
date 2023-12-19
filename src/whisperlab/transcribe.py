@@ -6,10 +6,10 @@ This module can transcribe an audio file using Whisper.
 
 import logging
 from pathlib import Path
-
+from pydantic import FilePath
 import whisper
 
-from .tasks import TranscriptionTask
+from .tasks import Task
 
 
 log = logging.getLogger("main")
@@ -40,30 +40,48 @@ def EmptyFile(audio_file: Path):
     return audio_file.stat().st_size == 0
 
 
+# Models ======================================================================
+
+
+class TranscribeTask(Task):
+    """
+    Whisper Request Model
+
+    Args:
+        audio_file (Path): Path to the audio file to transcribe
+        args (dict): Arguments to pass to whisper
+
+    Returns:
+        dict: The whisper result
+    """
+
+    audio_file: FilePath
+    args: dict = {}
+    model: str = DEFAULT_TRANSCRIPTION_MODEL
+
+
 # Use Case ====================================================================
 
 
 def transcribe(
-    task: TranscriptionTask,
+    task: TranscribeTask,
 ):
     """
     Run trancription on an audio file.
 
     Args:
-        task (TranscriptionTask): The trascription task to process.
+        task (TranscribeTask): The trascription task to process.
 
     Effects:
         Logs the result.
 
     Returns:
-        task (TranscriptionTask): The trascription task with the result.
+        task (TranscribeTask): The trascription task with the result.
     """
 
-    # Check if the audio file is empty
+    # Validate empty audio files
     if EmptyFile(task.audio_file):
-        # Return an empty result
-        task.result = EMPTY_RESULT
-        return task
+        return EMPTY_RESULT
 
     # Load and trim the audio file to 30 seconds
     audio = whisper.load_audio(str(task.audio_file))
@@ -76,9 +94,9 @@ def transcribe(
     model = whisper.load_model(task.model)
 
     # Transcribe the audio
-    response = model.transcribe(audio, **task.args)
+    result = model.transcribe(audio, **task.args)
 
     # Log the result text
-    log.info("Transcription:\n%s", response["text"])
+    log.info("Transcription:\n%s", result["text"])
 
-    return response
+    return result

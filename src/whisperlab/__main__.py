@@ -13,21 +13,28 @@ whisperlab transcribe audio.wav --model english
 whisperlab transcribe audio.wav -m english
 """
 
+import logging
+
 import click
 
-from whisperlab.run_whisper import (
-    run_whisper,
-    WhisperRequest,
-    WhisperModels,
-    DEFAULT_TRANSRIPTION_MODEL,
+from whisperlab.transcribe import (
+    transcribe as transcription_use_case,
+    TRANSCRIPTION_MODELS,
+    DEFAULT_TRANSCRIPTION_MODEL,
+    TranscribeTask,
 )
 from whisperlab.logging import config_log
+
+import toml
+
+META = toml.load("pyproject.toml")
+VERSION = META["project"]["version"]
 
 
 # Logging =====================================================================
 
 config_log()
-
+log = logging.getLogger("main")
 
 # Click Objects ===============================================================
 
@@ -39,6 +46,7 @@ ExistingFile = click.Path(exists=True, dir_okay=False)
 
 # Base Group
 @click.group()
+@click.version_option(version=VERSION)
 def cli():
     pass
 
@@ -49,8 +57,8 @@ def cli():
 @click.option(
     "-m",
     "--model",
-    type=click.Choice(WhisperModels),
-    default=DEFAULT_TRANSRIPTION_MODEL,
+    type=click.Choice(TRANSCRIPTION_MODELS),
+    default=DEFAULT_TRANSCRIPTION_MODEL,
     help="The transcription model to use",
 )
 def transcribe(audio_file: str, model: str):
@@ -61,8 +69,8 @@ def transcribe(audio_file: str, model: str):
         audio_file (str): The audio file to transcribe
         model (str): The transcription model to use
     """
-    request = WhisperRequest(audio_file, model=model)
-    run_whisper(request)
+    transcription_task = TranscribeTask(audio_file, model=model)
+    transcription_use_case(transcription_task)
 
 
 # Run the CLI =================================================================
