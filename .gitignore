@@ -10,3 +10,10 @@
 
 # Ignore VSCode Local Settings 
 .vscode/
+
+
+# Ignore build files
+build/
+
+# Ignore venv files
+venv/
