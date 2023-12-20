@@ -33,7 +33,7 @@ classifiers = [
 
 dependencies = [
     # Audio IO
-    "pyaudio",
+    "sounddevice",
     # AI
     "openai-whisper",
     # Data Models
