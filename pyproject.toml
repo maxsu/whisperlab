@@ -45,6 +45,8 @@ dependencies = [
     # QA
     "flake8",
     "pytest",
+    # Visualizations
+    "matplotlib",
 ]
 
 
