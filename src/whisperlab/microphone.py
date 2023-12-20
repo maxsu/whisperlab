@@ -23,13 +23,15 @@ def int_or_str(text):
 
 CHANNEL = 1  # Input channel to use (assume 1 microphone channel)
 DEVICE = None  # Input device (use default device)
-SAMPLERATE = None  # Sample rate (in samples/sec) (use default)
+SAMPLERATE = sd.query_devices(kind="input")["default_samplerate"]
+# Sample rate (in samples/sec) (use default)
 BLOCKSIZE = None  # Block size (in samples) (use default)
 DOWNSAMPLE = 10  # Display every Nth sample
 INTERVAL = 30  # Minimum time between plot updates (in ms)
 WINDOW = 200  # Width of plot window (in ms)
+LENGTH = int(WINDOW * SAMPLERATE / (1000 * DOWNSAMPLE))  # Samples in signal window
+MAPPING = [0]
 
-mapping = [0]
 q = queue.Queue()
 
 
@@ -38,7 +40,28 @@ def audio_callback(indata, frames, time, status):
     if status:
         print(status, file=sys.stderr)
     # Fancy indexing with mapping creates a (necessary!) copy:
-    q.put(indata[::DOWNSAMPLE, mapping])
+    q.put(indata[::DOWNSAMPLE, MAPPING])
+
+
+def get_plot(length):
+    """Create a new plot with required buffer length."""
+    plotdata = np.zeros((length, 1))
+    fig, ax = plt.subplots()
+    lines = ax.plot(plotdata)
+    ax.axis((0, len(plotdata), -1, 1))
+    ax.set_yticks([0])
+    ax.yaxis.grid(True)
+    ax.tick_params(
+        bottom=False,
+        top=False,
+        labelbottom=False,
+        right=False,
+        left=False,
+        labelleft=False,
+    )
+    fig.tight_layout(pad=0)
+
+    return fig, lines, plotdata
 
 
 def update_plot(frame):
@@ -63,25 +86,8 @@ def update_plot(frame):
 
 
 if __name__ == "__main__":
-    SAMPLERATE = sd.query_devices(kind="input")["default_samplerate"]
-
-    length = int(WINDOW * SAMPLERATE / (1000 * DOWNSAMPLE))
-    plotdata = np.zeros((length, 1))
-
-    fig, ax = plt.subplots()
-    lines = ax.plot(plotdata)
-    ax.axis((0, len(plotdata), -1, 1))
-    ax.set_yticks([0])
-    ax.yaxis.grid(True)
-    ax.tick_params(
-        bottom=False,
-        top=False,
-        labelbottom=False,
-        right=False,
-        left=False,
-        labelleft=False,
-    )
-    fig.tight_layout(pad=0)
+    # Put lines and plotdata in scope for the update_plot function
+    fig, lines, plotdata = get_plot(LENGTH)
 
     stream = sd.InputStream(
         device=DEVICE,
