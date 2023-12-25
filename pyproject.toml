@@ -60,6 +60,16 @@ requires = ["setuptools", "wheel"]
 
 # -----------------------------------------------------------------------------
 
+# Entry Points
+
+# -----------------------------------------------------------------------------
+
+[project.scripts]
+
+whisperlab = "whisperlab.__main__:cli"
+
+# -----------------------------------------------------------------------------
+
 # Linting
 
 # -----------------------------------------------------------------------------
@@ -124,7 +134,4 @@ simple.format = "{asctime} [{levelname}] {message}"
 
 verbose.class = "whisperlab.logging.Formatter" # Provide relpath
 verbose.style = "{"
-verbose.format = """{asctime} [{levelname}]
-src: {relpath}:{lineno}
-msg: {message}
--------------------------------"""
+verbose.format = "{asctime} {relpath}:{lineno} [{levelname}] {message}"

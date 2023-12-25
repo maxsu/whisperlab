@@ -1,28 +1,33 @@
-from click.testing import CliRunner
-import toml
+from whisperlab import VERSION
 
-from whisperlab.__main__ import cli
+import subprocess
 
 
-META = toml.load("pyproject.toml")
-VERSION = META["project"]["version"]
+def run_whisperlab(*args):
+    """Run whisperlab and return the result."""
+
+    result: subprocess.CompletedProcess = subprocess.run(
+        ["whisperlab", *args],
+        stdout=subprocess.PIPE,  # Capture stdout
+    )
+    # Transform the stdout bytes buffer to string
+    result.output = result.stdout.decode()
+    return result
 
 
 def test_help():
-    runner = CliRunner()
-    result = runner.invoke(cli, ["--help"])
-    assert result.exit_code == 0
+    result = run_whisperlab("--help")
+    assert result.returncode == 0
 
 
 def test_version():
-    runner = CliRunner()
-    result = runner.invoke(cli, ["--version"])
-    assert result.exit_code == 0
+    result = run_whisperlab("--version")
+    assert result.returncode == 0
     assert VERSION in result.output
 
 
 def test_transcribe():
-    runner = CliRunner()
-    result = runner.invoke(cli, ["transcribe", "tests/data/test.wav"])
-    assert result.exit_code == 0
-    assert "hello world" in result.output.lower()
+    audio_file = "tests/data/hello_world.mp3"
+    result = run_whisperlab("transcribe", audio_file)
+    assert result.returncode == 0
+    assert "Hello world." in result.output

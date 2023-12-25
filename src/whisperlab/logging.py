@@ -12,9 +12,12 @@ from pathlib import Path
 CONFIG_FILE = "pyproject.toml"
 
 
-def config_log():
+def config_log(debug=False):
     # Load the logging config from the project's pyproject.toml file
     logging518.config.fileConfig(CONFIG_FILE)
+
+    if debug:
+        logging.getLogger("main").setLevel(logging.DEBUG)
 
 
 class Formatter(logging.Formatter):

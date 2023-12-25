@@ -17,6 +17,7 @@ import logging
 
 import click
 
+from whisperlab import VERSION
 from whisperlab.transcribe import (
     transcribe as transcription_use_case,
     TRANSCRIPTION_MODELS,
@@ -24,12 +25,6 @@ from whisperlab.transcribe import (
     TranscribeTask,
 )
 from whisperlab.logging import config_log
-
-import toml
-
-META = toml.load("pyproject.toml")
-VERSION = META["project"]["version"]
-
 
 # Logging =====================================================================
 
@@ -69,7 +64,7 @@ def transcribe(audio_file: str, model: str):
         audio_file (str): The audio file to transcribe
         model (str): The transcription model to use
     """
-    transcription_task = TranscribeTask(audio_file, model=model)
+    transcription_task = TranscribeTask(audio_file=audio_file, model=model)
     transcription_use_case(transcription_task)
 
 

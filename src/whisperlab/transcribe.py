@@ -94,7 +94,7 @@ def transcribe(
     model = whisper.load_model(task.model)
 
     # Transcribe the audio
-    result = model.transcribe(audio, **task.args)
+    result = model.transcribe(audio, fp16=False, **task.args)
 
     # Log the result text
     log.info("Transcription:\n%s", result["text"])

@@ -1,8 +1,5 @@
-# Sparse base module for WhisperLab, to be used as a namespace package.
-# Pleas import from whisperlab submodules instead
+import tomllib
 
-# Example:
 
-# from whisperlab import transcribe
-
-# transcribe.transcribe_file('path/to/file.wav')
+with open("pyproject.toml", "rb") as f:
+    VERSION = tomllib.load(f)["project"]["version"]
