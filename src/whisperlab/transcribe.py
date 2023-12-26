@@ -4,16 +4,15 @@ Whisper Runner Module
 This module can transcribe an audio file using Whisper.
 """
 
-import logging
 from pathlib import Path
 from pydantic import FilePath
 import whisper
 
+import whisperlab.logging
 from .tasks import Task
 
 
-log = logging.getLogger("main")
-
+log = whisperlab.logging.config_log()
 
 # Globals =====================================================================
 

@@ -16,8 +16,7 @@ import sounddevice
 import whisperlab.logging
 from whisperlab.time import time_ms
 
-whisperlab.logging.config_log(debug=True)
-log = logging.getLogger("main")
+log = whisperlab.logging.config_log(debug=True)
 
 
 # Constants ===================================================================

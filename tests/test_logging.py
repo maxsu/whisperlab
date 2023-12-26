@@ -1,9 +1,9 @@
-import logging
+import whisperlab.logging
 
 
 def test_live_logging():
     # Contract: The logger is visible in the console
-    log = logging.getLogger()
+    log = whisperlab.logging.config_log()
     log.info("This is an info message")
     log.debug("This is a debug message")
     log.warning("This is a warning message")

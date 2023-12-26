@@ -4,8 +4,7 @@ import os
 import logging
 import whisperlab.logging
 
-whisperlab.logging.config_log()
-log = logging.getLogger("main")
+log = whisperlab.logging.config_log()
 
 log.info("Running tests/test_main.py")
 

@@ -10,14 +10,43 @@ import logging518.config
 from pathlib import Path
 
 CONFIG_FILE = "pyproject.toml"
+LOG_CONFIGURED = False
 
 
 def config_log(debug=False):
-    # Load the logging config from the project's pyproject.toml file
-    logging518.config.fileConfig(CONFIG_FILE)
+    """
+    Configure the logging module and provide the main logger.
 
-    if debug:
-        logging.getLogger("main").setLevel(logging.DEBUG)
+    This pulls the logging config from the tool.logging section of the
+    project's pyproject.toml file.
+
+    It is safe to call this function multiple times. It will only configure
+    logging on the first call.
+
+    Args:
+        debug (bool): Whether to set the log level to debug.
+
+    Returns:
+        logging.Logger: The main logger.
+    """
+
+    global LOG_CONFIGURED
+
+    # Get the main logger
+    log = logging.getLogger("main")
+
+    # Only configure logging once
+    if not LOG_CONFIGURED:
+        LOG_CONFIGURED = True
+
+        # Load the logging config from the project's pyproject.toml file
+        logging518.config.fileConfig(CONFIG_FILE)
+
+        # Set the log level to debug if requested
+        if debug:
+            log.setLevel(logging.DEBUG)
+
+    return log
 
 
 class Formatter(logging.Formatter):

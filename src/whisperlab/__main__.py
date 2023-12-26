@@ -24,12 +24,12 @@ from whisperlab.transcribe import (
     DEFAULT_TRANSCRIPTION_MODEL,
     TranscribeTask,
 )
-from whisperlab.logging import config_log
+import whisperlab.logging
 
 # Logging =====================================================================
 
-config_log()
-log = logging.getLogger("main")
+
+log = whisperlab.logging.config_log()
 
 # Click Objects ===============================================================
 
