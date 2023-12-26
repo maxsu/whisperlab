@@ -67,6 +67,7 @@ requires = ["setuptools", "wheel"]
 [project.scripts]
 
 whisperlab = "whisperlab.__main__:cli"
+whisperlab_clean = "whisperlab.clean_whisperlab:clean_whisperlab"
 
 # -----------------------------------------------------------------------------
 
