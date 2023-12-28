@@ -6,6 +6,54 @@ Plot the live microphone signal(s) with matplotlib.
 This module provides functionality to visualize live microphone input using 
 matplotlib and numpy. It includes utilities for audio processing, 
 frame monitoring, and graphical display.
+
+System Diagram:
+
+link: https://www.mermaidchart.com/app/projects/4aca0ad9-0406-4241-a578-1519231682d6/diagrams/5ffa4edd-5cbc-44ff-89a0-84f012537965/version/v0.1/edit
+syntax reference: https://mermaid.js.org/syntax/classDiagram.html
+
+
+```mermaid
+classDiagram
+    class App {
+      -PlotBuffer model
+      -View view
+      -RealtimeRecorder stream
+      +start()
+      +stop()
+    }
+
+    class View {
+      -PlotBuffer model
+      -list[Line2d] lines
+      -FuncAnimation animation 
+      +update(frame)
+      +start()
+      +stop()
+    }
+
+    class PlotBuffer {
+      -numpy.ndarray buffer
+      +get()
+      +put(audio_samples)
+    }
+
+    class RealtimeRecorder {
+      -sounddevice.InputStream stream
+      -PlotBuffer model
+      +callback(samples, frames, time, status)
+      +start()
+      +stop()
+    }
+
+    App --* PlotBuffer : __init__()
+    App --* View: __init__(), start(), stop()
+    App --* RealtimeRecorder: __init__(), start(), stop()
+    View --* PlotBuffer: get()
+    RealtimeRecorder --* PlotBuffer: put()
+    RealtimeRecorder ..> RealtimeRecorder: callback()
+    View ..> View:  update()
+```
 """
 
 import atexit
@@ -18,6 +66,8 @@ import sounddevice
 
 import whisperlab.logging
 from whisperlab.time import time_ms
+from whisperlab.audio import roll, SAMPLES_PER_SECOND
+
 
 log = whisperlab.logging.config_log(debug=True)
 
@@ -30,14 +80,15 @@ SECONDS_PER_MS = 0.001
 
 # Audio constants
 CHANNEL = 1  # Input channel to use (assume 1 microphone channel)
-SAMPLES_PER_SECOND = 44_100  # Sample rate (in samples/sec)
-SAMPLES_PER_MS = 44.1  # Samples per millisecond (in samples/ms) = SAMPLES_PER_SECOND * SECONDS_PER_MS
+SAMPLES_PER_MS = (
+    16  # Samples per millisecond (in samples/ms) = SAMPLES_PER_SECOND * SECONDS_PER_MS
+)
 
 # Plot constants
 WINDOW_SECONDS = 8  # Width of plot window (in seconds)
 FRAMES_PER_SECOND = 20  # Frame rate of the plot display (in Hz)
 DOWNSAMPLE = 10  # Display every Nth sample
-SAMPLES_PER_WINDOW = 35_280
+SAMPLES_PER_WINDOW = 8
 # = int(SAMPLES_PER_SECOND * WINDOW_SECONDS / DOWNSAMPLE)
 MS_PER_FRAME = 50  # Frame rate of the plot display (in ms) = 1000 / FRAMES_PER_SECOND
 PLOT_SAMPLES_PER_MS = 4.41  # = SAMPLES_PER_MS / DOWNSAMPLE
@@ -45,17 +96,6 @@ RAW_SAMPLES_PER_FRAME = 2205  # = int(SAMPLES_PER_MS * MS_PER_FRAME)
 
 
 # Model =======================================================================
-
-
-def roll(buffer: np.ndarray, samples: np.ndarray):
-    """Roll new samples into a numpy array. Use downsampling."""
-
-    if len(samples) > len(buffer):
-        return samples[-len(buffer) :]
-    left_shift = -len(samples)
-    buffer = np.roll(buffer, left_shift)
-    buffer[left_shift:] = samples
-    return buffer
 
 
 class PlotBuffer:
