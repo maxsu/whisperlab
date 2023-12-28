@@ -33,6 +33,7 @@ classifiers = [
 
 dependencies = [
     # Audio IO
+    "pydub",
     "sounddevice",
     # AI
     "openai-whisper",
