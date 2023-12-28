@@ -1,8 +1,11 @@
-#!/usr/bin/env python3
-"""Plot the live microphone signal(s) with matplotlib.
+"""
+Module: whisperlab.microphone
 
-Matplotlib and NumPy have to be installed.
+Plot the live microphone signal(s) with matplotlib.
 
+This module provides functionality to visualize live microphone input using 
+matplotlib and numpy. It includes utilities for audio processing, 
+frame monitoring, and graphical display.
 """
 
 import atexit
@@ -48,7 +51,7 @@ def roll(buffer: np.ndarray, samples: np.ndarray):
     """Roll new samples into a numpy array. Use downsampling."""
 
     if len(samples) > len(buffer):
-        return buffer[-len(buffer) :]
+        return samples[-len(buffer) :]
     left_shift = -len(samples)
     buffer = np.roll(buffer, left_shift)
     buffer[left_shift:] = samples
@@ -71,6 +74,7 @@ class PlotBuffer:
 
 # View ========================================================================
 
+
 frame_sample_counter = 0
 plot_timer = time_ms()
 
@@ -79,23 +83,24 @@ def frame_monitor(update_func):
     """Monitor frame interval and samples."""
 
     def wrapped_update_func(self, frame):
-        global frame_sample_counter
-        global plot_timer
-        t1 = time_ms()
-        interval_ms = t1 - plot_timer
-        plot_timer = t1
-        expected_samples = round(interval_ms * PLOT_SAMPLES_PER_MS)
-        discrepancy = frame_sample_counter - expected_samples
-        log.debug(
-            "Frame %s: %s ms, %s samples. "
-            "Expected: %s samples, discrepancy: %s samples.",
-            frame,
-            interval_ms,
-            frame_sample_counter,
-            expected_samples,
-            discrepancy,
-        )
-        frame_sample_counter = 0
+        if log.level == logging.DEBUG:
+            global frame_sample_counter
+            global plot_timer
+            t1 = time_ms()
+            interval_ms = t1 - plot_timer
+            plot_timer = t1
+            expected_samples = round(interval_ms * PLOT_SAMPLES_PER_MS)
+            discrepancy = frame_sample_counter - expected_samples
+            log.debug(
+                "Frame %s: %s ms, %s samples. "
+                "Expected: %s samples, discrepancy: %s samples.",
+                frame,
+                interval_ms,
+                frame_sample_counter,
+                expected_samples,
+                discrepancy,
+            )
+            frame_sample_counter = 0
         return update_func(self, frame)
 
     return wrapped_update_func
@@ -108,6 +113,7 @@ class View:
 
     lines: list[plt.Line2D]
     animation: FuncAnimation
+    model: PlotBuffer
 
     def __init__(self, model):
         self.model = model
@@ -137,80 +143,94 @@ class View:
         plt.close()
 
 
-# Adapters ====================================================================
+# Recorders ===================================================================
 
 
 def callback_monitor(callback):
     """Monitor callback execution time and samples."""
 
     def wrapped_callback(self, indata, frames, time, status):
-        global frame_sample_counter
-        frame_sample_counter += len(indata)
-        start_time = time_ms()
-        log.debug("Starting update")
-        log.debug("<-- Roll %s samples", len(indata))
-        callback(self, indata, frames, time, status)
-        log.debug("Update Completed in %s ms", time_ms() - start_time)
+        if log.level == logging.DEBUG:
+            global frame_sample_counter
+            frame_sample_counter += len(indata)
+            start_time = time_ms()
+            log.debug("Starting update")
+            log.debug("<-- Roll %s samples", len(indata))
+            callback(self, indata, frames, time, status)
+            log.debug("Update Completed in %s ms", time_ms() - start_time)
+        else:
+            callback(self, indata, frames, time, status)
 
     return wrapped_callback
 
 
 class Recorder:
-    """An audio recorder that pushes updates to the model."""
+    """Listen to the microphone and record samples to a data model."""
 
     stream: sounddevice.InputStream
     model: PlotBuffer
+    blocksize: int | None
+
+    def __init__(self, model, blocksize=None):
+        self.stream = sounddevice.InputStream(
+            callback=self.callback,
+            blocksize=blocksize,
+        )
+        self.model = model
+        self.blocksize = blocksize
 
     def start(self):
-        """Start the microphone stream."""
         self.stream.start()
 
     def stop(self):
-        """Stop the microphone stream."""
         self.stream.stop()
-
-
-class RealtimeRecorder(Recorder):
-    """A recorder that pushes updates in real time."""
-
-    def __init__(self, model):
-        self.stream = sounddevice.InputStream(
-            callback=self.callback,
-        )
-        self.model = model
 
     @callback_monitor
     def callback(self, samples, frames, time, status):
         self.model.put(samples)
 
 
+def FrameBlockRecorder(model):
+    return Recorder(model, blocksize=RAW_SAMPLES_PER_FRAME)
+
+
+def FiveSecondBlockRecorder(model):
+    return Recorder(model, blocksize=SAMPLES_PER_SECOND * 5)
+
+
 # Controller ==================================================================
 
 
-DEFAULT_STREAM = RealtimeRecorder
+DEFAULT_STREAM = Recorder
 
 
 class App:
     """A controller for the application."""
 
-    def __init__(self, view_class=View, stream_class=DEFAULT_STREAM):
+    def __init__(self, view_class=View, stream_class=Recorder):
         self.model = PlotBuffer()
         self.view = view_class(model=self.model)
         self.stream = stream_class(model=self.model)
-        # Make sure to stop the application on exit
-        atexit.register(self.stop)
 
     def start(self):
         """Start the application resources."""
+        # Stop the application cleanly on exit
+        atexit.register(self.stop)
+        log.info("Starting stream")
         self.stream.start()
+        log.info("Starting view")
         self.view.start()
+        log.info("Application started")
 
     def stop(self):
         """Stop the application resources."""
+        log.info("Stopping stream")
         self.stream.stop()
+        log.info("Stopping view")
         self.view.stop()
+        log.info("Application stopped")
 
 
 if __name__ == "__main__":
-    app = App()
+    app = App(stream_class=FrameBlockRecorder)
     app.start()
