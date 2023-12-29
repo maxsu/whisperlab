@@ -213,6 +213,23 @@ class Microphone:
         return samples
 
 
+class VirtualMicrophone:
+    def __init__(self, audio_file):
+        self.audio_file = audio_file
+        samples = load_audio_file(audio_file)
+        segments = len(samples) // SAMPLES_PER_WINDOW
+        self.samples = samples[: segments * SAMPLES_PER_WINDOW].reshape(
+            segments, SAMPLES_PER_WINDOW
+        )
+        self.index = 0
+
+    def get(self):
+        if self.index >= self.segments:
+            raise Exception("Unexpected end of samples")
+        samples = self.samples[self.index]
+        self.index += 1
+
+
 # Loaders =====================================================================
 
 
