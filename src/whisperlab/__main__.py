@@ -14,6 +14,7 @@ whisperlab transcribe audio.wav -m english
 """
 
 import logging
+from pathlib import Path
 
 import click
 
@@ -64,7 +65,7 @@ def transcribe(audio_file: str, model: str):
         audio_file (str): The audio file to transcribe
         model (str): The transcription model to use
     """
-    transcription_task = TranscribeTask(audio_file=audio_file, model=model)
+    transcription_task = TranscribeTask(audio_file=Path(audio_file), model=model)
     transcription_use_case(transcription_task)
 
 
