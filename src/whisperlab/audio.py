@@ -182,6 +182,29 @@ class WaveBuffer:
         return audio_samples
 
 
+# Loaders =====================================================================
+
+
+def load_audio_file(audio_file: Path):
+    """
+    Load an audio file into a numpy array
+
+    Args:
+        audio_file (Path): The path to the audio file to load
+
+    Returns:
+        np.ndarray: The audio array
+    """
+
+    # Validate the audio file
+    ValidateAudioFile(audio_file)
+
+    # Load the audio file
+    audio = whisper.audio.load_audio(audio_file)
+
+    return audio
+
+
 # Exporters ===================================================================
 
 
