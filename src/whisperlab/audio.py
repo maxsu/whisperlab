@@ -99,8 +99,6 @@ def float32_to_int16(audio: np.ndarray):
 
     Maps the float32 range [-1, 1] to the int16 range [-32768, 32767]
 
-    May mangle samples outside [-1, 1 ].
-
     Args:
         audio (np.ndarray): The audio array to convert
 
@@ -111,7 +109,9 @@ def float32_to_int16(audio: np.ndarray):
         Exception: If the audio array contains samples outside [-1, 1]
     """
     ValidateAudioArray(audio)
-    return (audio * 32_768).astype(np.int16)
+
+    new_audio = (audio * 32_768).astype(np.int16)
+    return new_audio
 
 
 # Operators ===================================================================
@@ -132,8 +132,6 @@ def roll(buffer: np.ndarray, samples: np.ndarray):
 
         >>> roll(np.array([1, 2, 3]), np.array([4, 5]))
         array([3., 4., 5.])
-
-
 
     Args:
         buffer (np.ndarray): The buffer to roll the samples into
@@ -187,7 +185,7 @@ class WaveBuffer:
 # Exporters ===================================================================
 
 
-def save_audio(audio: np.ndarray, path: Path):
+def save_audio_segment(audio: np.ndarray, text, base_path: Path):
     """
     Save an audio array to a file
 
@@ -196,9 +194,20 @@ def save_audio(audio: np.ndarray, path: Path):
         path (Path): The path to save the audio to
     """
 
+    # Create the parent directory if it does not exist
+    base_path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Create the path to save the audio and text to
+    text_path = base_path.with_suffix(".txt")
+    audio_path = base_path.with_suffix(".wav")
+
+    # Export the audio array to a WAV file
     pydub.AudioSegment(
         float32_to_int16(audio).tobytes(),
         frame_rate=SAMPLES_PER_SECOND,
         sample_width=2,
         channels=1,
-    ).export(path, format="wav")
+    ).export(audio_path, format="wav")
+
+    # Export the text to a text file
+    text_path.write_text(text)
