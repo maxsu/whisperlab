@@ -3,7 +3,9 @@ from pathlib import Path
 import numpy as np
 import pydub
 import whisper.audio
+import sounddevice
 
+from whisperlab.time import time_ms
 
 # Constants ===================================================================
 
@@ -180,6 +182,35 @@ class WaveBuffer:
 
     def process(self, audio_samples):
         return audio_samples
+
+
+# Microphone ==================================================================
+
+
+class Microphone:
+    def __init__(self, window_length: int = 5):
+        self.window_length = window_length
+        self.window_samples = SAMPLES_PER_SECOND * window_length
+        self.stream = sounddevice.InputStream(
+            channels=1,
+            blocksize=self.window_samples,
+            samplerate=SAMPLES_PER_SECOND,
+        )
+        self.stream.start()
+
+    def get(self):
+        time = time_ms()
+        samples, overflowed = self.stream.read(self.window_samples)
+        if overflowed:
+            raise Exception("Unexpected overflow")
+
+        samples = samples[:, 0]  # unpack channel 1
+        log.debug(
+            "Fetched %s samples in %s ms",
+            len(samples),
+            time_ms() - time,
+        )
+        return samples
 
 
 # Loaders =====================================================================
