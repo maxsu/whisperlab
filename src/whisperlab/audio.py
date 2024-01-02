@@ -1,11 +1,16 @@
 from pathlib import Path
 
+import logging
+
 import numpy as np
 import pydub
 import whisper.audio
 import sounddevice
 
 from whisperlab.time import time_ms
+
+
+log = logging.getLogger("main")
 
 # Constants ===================================================================
 
