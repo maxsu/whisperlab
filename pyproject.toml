@@ -46,6 +46,7 @@ dependencies = [
     # QA
     "flake8",
     "pytest",
+    "pytest-memray",
     # Visualizations
     "matplotlib",
 ]
