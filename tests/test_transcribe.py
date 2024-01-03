@@ -42,9 +42,9 @@ def test_create_simple_request(poem: Task, poem_file: Path):
 
 def test_transcribe_empty_file_to_empty_text(empty_file: Task):
     result = transcribe(empty_file)
-    assert result["text"] == ""
+    assert result.text == ""
 
 
 def test_transcribe_poem(poem):
     result = transcribe(poem)
-    assert result["text"]
+    assert result.text
