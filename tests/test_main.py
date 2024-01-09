@@ -27,7 +27,7 @@ def test_version():
 
 
 def test_transcribe():
-    audio_file = "tests/data/hello_world.mp3"
+    audio_file = "audio/hello_world.mp3"
     result = run_whisperlab("transcribe", audio_file)
     assert result.returncode == 0
     assert "Hello world." in result.output

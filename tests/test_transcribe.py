@@ -15,7 +15,7 @@ from whisperlab.transcribe import (
 
 @fixture
 def poem_file() -> Path:
-    return Path("tests/data/poem_sappho_58_by_Jameson_Fitzpatrick.mp3")
+    return Path("audio/poem_sappho_58_by_Jameson_Fitzpatrick.mp3")
 
 
 @fixture
@@ -25,7 +25,7 @@ def poem(poem_file) -> TranscribeTask:
 
 @fixture
 def empty_file() -> TranscribeTask:
-    return TranscribeTask(audio_file=Path("tests/data/empty_file.mp3"))
+    return TranscribeTask(audio_file=Path("audio/empty_file.mp3"))
 
 
 # Test Task Creation ----------------------------------------------------------
