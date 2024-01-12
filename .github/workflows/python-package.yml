@@ -12,15 +12,14 @@ jobs:
     name: Job ${{matrix.id}}. Python ${{ matrix.python }} on ${{matrix.os}}.
     runs-on: ${{matrix.os}}
     strategy:
-      fail-fast: false
       matrix:
         include:
-          # Jobs 1-4: Legacy Tests. Test with python 3.8 - 3.11 on ubuntu
+          # Legacy Tests: Python 3.8 - 3.11 on Ubuntu
           - {id: 1, python: "3.8", os: ubuntu-latest }
           - {id: 2, python: "3.9", os: ubuntu-latest }
           - {id: 3, python: "3.11", os: ubuntu-latest }
           - {id: 4, python: "3.10", os: ubuntu-latest }
-          # Jobs 5-7: Cross Platform Tests. Test with python 3.12 on windows, mac, and ubuntu
+          # Cross Platform Tests. Python 3.12 on Windows, Mac, and Ubuntu
           - {id: 5, python: "3.12", os: ubuntu-latest }
           - {id: 6, python: "3.12", os: windows-latest }
           - {id: 7, python: "3.12", os: macos-latest }
@@ -37,14 +36,11 @@ jobs:
     - name: Update pip
       run: pip install -U pip
 
-    - name: Fetch linter
-      run: pip install flake8
-
-    - name: Lint package
-      run: flake8
-
     - name: Install package
       run: pip install .
     
     - name: Test package
       run: pytest
+
+    - name: Lint package
+      run: flake8
