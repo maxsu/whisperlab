@@ -70,6 +70,22 @@ requires = ["setuptools", "wheel"]
 whisperlab = "whisperlab.__main__:cli"
 whisperlab_clean = "whisperlab.clean_whisperlab:clean_whisperlab"
 
+
+# -----------------------------------------------------------------------------
+
+# Testing
+
+# -----------------------------------------------------------------------------
+
+[tool.pytest.ini_options]
+
+# Live-log outputs during tests  (Turn this off for quieter tests)
+log_cli = true
+
+# See: 
+# Log-Cli Reference: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli
+
+
 # -----------------------------------------------------------------------------
 
 # Linting
@@ -92,20 +108,6 @@ show-source = true
 # - Rules Reference: https://www.flake8rules.com/
 # - Options Reference https://flake8.pycqa.org/en/latest/user/configuration.html
 
-# -----------------------------------------------------------------------------
-
-# Testing
-
-# -----------------------------------------------------------------------------
-
-[tool.pytest.ini_options]
-
-# Live-log outputs during tests  (Turn this off for quieter tests)
-log_cli = true
-
-# See: 
-# Log-Cli Reference: https://docs.pytest.org/en/6.2.x/reference.html#confval-log_cli
-
 
 # -----------------------------------------------------------------------------
 
@@ -117,23 +119,31 @@ log_cli = true
 
 version = 1
 
-# main logger
-loggers.main.level = "DEBUG"
-loggers.main.handlers = ["console", "file"]
+# Loggers
 
-[tool.logging.handlers]
-console.class = "logging.StreamHandler"
-console.stream = "ext://sys.stdout"
-console.formatter = "simple"
+[tool.logging.loggers.main]
+level = "DEBUG"
+handlers = ["console", "file"]
 
-file.class = "logging.FileHandler"
-file.filename = "whisperlab_main.log"
-file.formatter = "verbose"
+# Handlers
 
-[tool.logging.formatters]
-simple.style = "{"
-simple.format = "{asctime} [{levelname}] {message}"
+[tool.logging.handlers.console]
+class = "logging.StreamHandler"
+stream = "ext://sys.stdout"
+formatter = "simple"
 
-verbose.class = "whisperlab.logging.Formatter" # Provide relpath
-verbose.style = "{"
-verbose.format = "{asctime} {relpath}:{lineno} [{levelname}] {message}"
+[tool.logging.handlers.file]
+class = "logging.FileHandler"
+filename = "whisperlab_main.log"
+formatter = "verbose"
+
+# Formatters
+
+[tool.logging.formatters.simple]
+format = "{asctime} [{levelname}] {message}"
+style = "{"
+
+[tool.logging.formatters.verbose]
+format = "{asctime} {relpath}:{lineno} [{levelname}] {message}"
+style = "{"
+class = "whisperlab.logging.Formatter" # Provide relpath
