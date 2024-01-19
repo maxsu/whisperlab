@@ -1,5 +1,5 @@
-from typing import Optional, UUID
-from uuid import uuid4
+from typing import Optional
+from uuid import uuid4, UUID
 from pydantic import BaseModel, Field
 
 from whisperlab.time import time_ms
