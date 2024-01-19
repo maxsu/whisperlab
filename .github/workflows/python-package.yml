@@ -14,15 +14,15 @@ jobs:
     strategy:
       matrix:
         include:
-          # Legacy Tests: Python 3.8 - 3.11 on Ubuntu
+          # Legacy Tests: Python 3.8 - 3.10 on Ubuntu
           - {id: 1, python: "3.8", os: ubuntu-latest }
           - {id: 2, python: "3.9", os: ubuntu-latest }
-          - {id: 3, python: "3.11", os: ubuntu-latest }
           - {id: 4, python: "3.10", os: ubuntu-latest }
-          # Cross Platform Tests. Python 3.12 on Windows, Mac, and Ubuntu
-          - {id: 5, python: "3.12", os: ubuntu-latest }
-          - {id: 6, python: "3.12", os: windows-latest }
-          - {id: 7, python: "3.12", os: macos-latest }
+          # Cross Platform Tests. Python 3.11 on Windows, Mac, and Ubuntu
+          - {id: 5, python: "3.11", os: ubuntu-latest }
+          - {id: 6, python: "3.11", os: windows-latest }
+          - {id: 7, python: "3.11", os: macos-latest }
+          # 3.12 support currently impossible due to numba
           
     steps:
     - name: Fetch Repo
