@@ -1,23 +1,16 @@
-# Ignore log files in the root directory.
-*.txt
+# logs
+*.log
+logs/
 
-# Ignore python cache files
+# python cache files
 **__pycache__/
 
-# Ignore egg info files
+# python build files
 *.egg-info/
-
-# Ignore VSCode Local Settings 
-.vscode/
-
-# Ignore build files
 build/
 
-# Ignore venv files
+# python virtual environment
 venv/
 
-# Ignore log files
-*.log
-
-# Ignore the logs/ directory
-logs/
+# vscode settins 
+.vscode/
